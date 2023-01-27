@@ -76,8 +76,7 @@ console.log(`nilai total pada index ganjil adalah ${totalGanjil}`);
 
 //mencari nilai rata-rata pada array indexGenap dan indexGanjil
 function mencariRata(total, array) {
-  let ratarata = total / array.length;
-  return ratarata;
+  return total / array.length;
 }
 
 let rataGenap = mencariRata(totalGenap, indexGenap);
