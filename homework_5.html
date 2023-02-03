@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <title>Daftar Pekerja</title>
+  </head>
+  <body>
+    <nav
+      class="navbar"
+      style="background-image: linear-gradient(60deg, #4b79a1, #283e51)"
+    >
+      <div class="container-fluid ps-5 pe-5 d-flex align-items-center">
+        <div class="">
+          <span class="navbar-brand fs-2 h1 text-light">Data Pekerja</span>
+        </div>
+        <div class="">
+          <span class="row-auto fs-5 h2 text-light">Tambah Peserta</span>
+          <form class="row-auto row" id="form" autocomplete="off">
+            <div class="col-auto">
+              <input
+                class="form-control form-control-sm"
+                id="nama"
+                type="text"
+                placeholder="Nama"
+                aria-label="nama"
+                required
+              />
+            </div>
+            <div class="col-auto">
+              <input
+                class="form-control form-control-sm"
+                id="umur"
+                type="text"
+                placeholder="Umur"
+                aria-label="umur"
+                required
+              />
+            </div>
+            <div class="col-auto">
+              <input
+                class="form-control form-control-sm"
+                id="sangu"
+                type="text"
+                placeholder="Uang Sangu"
+                aria-label="sangu"
+                required
+              />
+            </div>
+            <div class="col-auto">
+              <button
+                type="submit"
+                id="submit"
+                class="btn btn-primary mb-3 btn-sm"
+              >
+                Tambah
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <div class="container mt-5">
+        <span class="h1 fs-3">List Peserta</span>
+        <table
+          id="tabel"
+          class="table table-striped table-hover text-center mt-3 fs-5"
+        >
+          <thead>
+            <tr>
+              <th scope="col">Nama</th>
+              <th scope="col">Umur</th>
+              <th scope="col">Uang Sangu</th>
+            </tr>
+          </thead>
+        </table>
+        <p class="fs-5 mt-4 mb-4">
+          Resume:<br />
+          Rata rata pendaftar memiliki uang sangu sebesar
+          <span id="ratarataUmur">0</span> dengan rata rata umur
+          <span id="ratarataSangu">0</span>
+        </p>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      //inisialisasi data pada input
+      const nama = document.getElementById("nama");
+      const umur = document.getElementById("umur");
+      const sangu = document.getElementById("sangu");
+      const form = document.getElementById("form");
+
+      const Peserta = []; // data peserta yang terdaftar
+
+      //menambahkan event untuk dijalankan
+      //penggunaan prevent default untuk menghilangkan default refresh pada button submit
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        validasi(hasilValidasi);
+        hapusPesan(pesan);
+      });
+
+      //variabel untuk menyimpan pesan peringatan
+      let pesan = [];
+
+      //validasi value input dan mengisi  pesan kedalam variabel pesan
+      function validasi(callback) {
+        if (nama.value.length < 10) {
+          pesan.push("Nama minimal 10 karakter");
+        }
+        if (umur.value < 25) {
+          pesan.push(" Umur minimal 25 tahun");
+        }
+        if (sangu.value < 100000 || sangu > 1000000) {
+          pesan.push(" Uang sangu minimal 100000 dan maksimal 1000000");
+        }
+        callback(pesan);
+      }
+
+      //pengecekan variabel pesan, jika ada data maka akan di tampilkan dengan function alert
+      const hasilValidasi = (pesan) => {
+        if (pesan == 0) {
+          prosesData();
+        } else {
+          alert(pesan);
+        }
+      };
+
+      //penghapusan data variabel pesan untuk digunakan kembali
+      const hapusPesan = (pesan) => {
+        pesan.splice(0);
+      };
+
+      //jika validasi sesuai maka akan masuk proses OOP
+      //memasukan data kedalam object array
+      function prosesData() {
+        const objekPeserta = buatObjek(nama.value, umur.value, sangu.value);
+        Peserta.push(objekPeserta);
+        tabelPeserta(objekPeserta, Peserta, resume);
+      }
+
+      //mengubah value kebentuk objek
+      function buatObjek(nama, umur, sangu) {
+        return {
+          nama,
+          umur,
+          sangu,
+        };
+      }
+
+      //menampilkan data peserta kedalam tabel
+      function tabelPeserta(objekPeserta, Peserta, callback) {
+        const tabelNama = document.createElement("td");
+        tabelNama.innerText = objekPeserta.nama;
+
+        const tabelUmur = document.createElement("td");
+        tabelUmur.innerText = objekPeserta.umur;
+
+        const tabelSangu = document.createElement("td");
+        tabelSangu.innerText = objekPeserta.sangu;
+
+        const tabelRow = document.createElement("tr");
+
+        const tabelBody = document.createElement("tbody");
+
+        const tabel = document.getElementById("tabel");
+
+        tabelRow.append(tabelNama, tabelUmur, tabelSangu);
+        tabelBody.append(tabelRow);
+        tabel.append(tabelBody);
+
+        callback(Peserta);
+      }
+
+      //mencari rata rata uang sangu dan umur lalu di tampilkan di html
+      function resume(Peserta) {
+        let dataUmur = [];
+        let totalUmur = null;
+        let rataUmur = null;
+        Peserta.forEach((obj) => dataUmur.push(parseInt(obj.umur)));
+        for (const val of dataUmur) {
+          totalUmur += val;
+        }
+        rataUmur = Math.floor(totalUmur / dataUmur.length);
+
+        const resumeUmur = document.getElementById("ratarataSangu");
+        resumeUmur.innerText = rataUmur;
+
+        let dataSangu = [];
+        let totalSangu = null;
+        let rataSangu = null;
+        Peserta.forEach((obj) => dataSangu.push(parseInt(obj.sangu)));
+        for (const val of dataSangu) {
+          totalSangu += val;
+        }
+        rataSangu = Math.floor(totalSangu / dataSangu.length);
+
+        const resumeSangu = document.getElementById("ratarataUmur");
+        resumeSangu.innerText = rataSangu;
+      }
+    </script>
+  </body>
+</html>
