@@ -10,7 +10,7 @@
       integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
       crossorigin="anonymous"
     />
-    <title>Daftar Pekerja</title>
+    <title>Daftar Pekerja Coba</title>
   </head>
   <body>
     <nav
@@ -98,119 +98,112 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      //inisialisasi data pada input
+      const form = document.getElementById("form");
       const nama = document.getElementById("nama");
       const umur = document.getElementById("umur");
       const sangu = document.getElementById("sangu");
-      const form = document.getElementById("form");
+      const tabel = document.getElementById("tabel");
 
-      const Peserta = []; // data peserta yang terdaftar
-
-      //menambahkan event untuk dijalankan
-      //penggunaan prevent default untuk menghilangkan default refresh pada button submit
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        validasi(hasilValidasi);
-        hapusPesan(pesan);
-      });
-
-      //variabel untuk menyimpan pesan peringatan
+      let arrpeserta = [];
       let pesan = [];
 
-      //validasi value input dan mengisi  pesan kedalam variabel pesan
-      function validasi(callback) {
-        if (nama.value.length < 10) {
-          pesan.push("Nama minimal 10 karakter");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        Validasi.validasi(Validasi.hasilValidasi);
+        Validasi.hapusPesan(pesan);
+      });
+
+      class Peserta {
+        constructor(nama, umur, sangu) {
+          this.nama = nama;
+          this.umur = umur;
+          this.sangu = sangu;
         }
-        if (umur.value < 25) {
-          pesan.push(" Umur minimal 25 tahun");
-        }
-        if (sangu.value < 100000 || sangu > 1000000) {
-          pesan.push(" Uang sangu minimal 100000 dan maksimal 1000000");
-        }
-        callback(pesan);
       }
 
-      //pengecekan variabel pesan, jika ada data maka akan di tampilkan dengan function alert
-      const hasilValidasi = (pesan) => {
-        if (pesan == 0) {
-          prosesData();
-        } else {
-          alert(pesan);
+      class Display {
+        static dataTabel() {
+          const tdNama = document.createElement("td");
+          const tdUmur = document.createElement("td");
+          const tdSangu = document.createElement("td");
+          const tr = document.createElement("tr");
+          const tbody = document.createElement("tbody");
+
+          arrpeserta.map((item) => {
+            tdNama.innerText = item.nama;
+            tdUmur.innerText = item.umur;
+            tdSangu.innerText = item.sangu;
+          });
+
+          tr.append(tdNama, tdUmur, tdSangu);
+          tbody.append(tr);
+          tabel.append(tbody);
         }
-      };
 
-      //penghapusan data variabel pesan untuk digunakan kembali
-      const hapusPesan = (pesan) => {
-        pesan.splice(0);
-      };
+        static nilaiRata(callback) {
+          let arrSangu = [];
+          let totalSangu = 0;
+          let rataSangu = 0;
 
-      //jika validasi sesuai maka akan masuk proses OOP
-      //memasukan data kedalam object array
-      function prosesData() {
-        const objekPeserta = buatObjek(nama.value, umur.value, sangu.value);
-        Peserta.push(objekPeserta);
-        tabelPeserta(objekPeserta, Peserta, resume);
+          arrpeserta.map((item) => arrSangu.push(parseInt(item.sangu)));
+          for (const val of arrSangu) {
+            totalSangu += val;
+          }
+          rataSangu = Math.floor(totalSangu / arrSangu.length);
+
+          let arrUmur = [];
+          let totalUmur = 0;
+          let rataUmur = 0;
+
+          arrpeserta.map((item) => arrUmur.push(parseInt(item.umur)));
+          for (const val of arrUmur) {
+            totalUmur += val;
+          }
+          rataUmur = Math.floor(totalUmur / arrUmur.length);
+
+          callback(rataSangu, rataUmur);
+        }
+
+        static dataResume(rataSangu, rataUmur) {
+          const resumeSangu = document.getElementById("ratarataSangu");
+          resumeSangu.innerText = rataSangu;
+          const resumeUmur = document.getElementById("ratarataUmur");
+          resumeUmur.innerText = rataUmur;
+        }
       }
 
-      //mengubah value kebentuk objek
-      function buatObjek(nama, umur, sangu) {
-        return {
-          nama,
-          umur,
-          sangu,
-        };
-      }
-
-      //menampilkan data peserta kedalam tabel
-      function tabelPeserta(objekPeserta, Peserta, callback) {
-        const tabelNama = document.createElement("td");
-        tabelNama.innerText = objekPeserta.nama;
-
-        const tabelUmur = document.createElement("td");
-        tabelUmur.innerText = objekPeserta.umur;
-
-        const tabelSangu = document.createElement("td");
-        tabelSangu.innerText = objekPeserta.sangu;
-
-        const tabelRow = document.createElement("tr");
-
-        const tabelBody = document.createElement("tbody");
-
-        const tabel = document.getElementById("tabel");
-
-        tabelRow.append(tabelNama, tabelUmur, tabelSangu);
-        tabelBody.append(tabelRow);
-        tabel.append(tabelBody);
-
-        callback(Peserta);
-      }
-
-      //mencari rata rata uang sangu dan umur lalu di tampilkan di html
-      function resume(Peserta) {
-        let dataUmur = [];
-        let totalUmur = null;
-        let rataUmur = null;
-        Peserta.forEach((obj) => dataUmur.push(parseInt(obj.umur)));
-        for (const val of dataUmur) {
-          totalUmur += val;
+      class Validasi {
+        static validasi(callback) {
+          if (nama.value.length < 10) {
+            pesan.push("Nama minimal 10 karakter");
+          }
+          if (umur.value < 25) {
+            pesan.push(" Umur minimal 25 tahun");
+          }
+          if (sangu.value < 100000 || sangu > 1000000) {
+            pesan.push(" Uang sangu minimal 100000 dan maksimal 1000000");
+          }
+          callback(pesan);
         }
-        rataUmur = Math.floor(totalUmur / dataUmur.length);
 
-        const resumeUmur = document.getElementById("ratarataSangu");
-        resumeUmur.innerText = rataUmur;
-
-        let dataSangu = [];
-        let totalSangu = null;
-        let rataSangu = null;
-        Peserta.forEach((obj) => dataSangu.push(parseInt(obj.sangu)));
-        for (const val of dataSangu) {
-          totalSangu += val;
+        static hasilValidasi(pesan) {
+          if (pesan == 0) {
+            Validasi.validasiBerhasil();
+          } else {
+            alert(pesan);
+          }
         }
-        rataSangu = Math.floor(totalSangu / dataSangu.length);
 
-        const resumeSangu = document.getElementById("ratarataUmur");
-        resumeSangu.innerText = rataSangu;
+        static hapusPesan(pesan) {
+          pesan.splice(0);
+        }
+
+        static validasiBerhasil() {
+          const peserta = new Peserta(nama.value, umur.value, sangu.value);
+          arrpeserta = [...arrpeserta, peserta];
+          Display.dataTabel();
+          Display.nilaiRata(Display.dataResume);
+        }
       }
     </script>
   </body>
